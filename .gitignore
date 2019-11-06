@@ -7,6 +7,10 @@ __pycache__/
 *.so
 *.csv
 
+# don't add files in data
+data/
+
+
 # Distribution / packaging
 .Python
 build/
