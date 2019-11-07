@@ -1,6 +1,3 @@
-import pandas as pd
-import numpy as np
-import os.path
 import string
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -9,8 +6,6 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize
 import pickle
-import nltk
-import spacy
 
 
 # create function to clean the text
@@ -44,7 +39,7 @@ def wn_tokenizer(doc):
 
 def bow_encoding(s):
     '''
-    Takes a pandas Series and encodes the strings to a Bag of Words matrix
+    Takes a pandas Series and fits and transforms the strings to a Bag of Words matrix
     :param s: pandas series
     :return: Numpy Matrix
     '''
@@ -55,10 +50,23 @@ def bow_encoding(s):
         pickle.dump(BoW_WN, fin)
     return BoW_WN_matrix
 
+def bow_encoding_val(s):
+    '''
+    Takes a pandas Series and transforms the strings to a Bag of Words matrix
+    :param s: pandas series
+    :return: Numpy Matrix
+    '''
+
+    with open('CountVectorizer.pk', 'rb') as f:
+        BoW_WN = pickle.load(f)
+    BoW_WN_matrix = BoW_WN.transform(s)
+
+    return BoW_WN_matrix
+
 
 def tfidf_encoding(s):
     '''
-    Takes a series of Texts and encodes the strings to a TFIDF matrix
+    Takes a series of Texts and fit and transforms the strings to a TFIDF matrix
     :param s: pandas series
     :return: numpy matrix
     '''
@@ -67,4 +75,18 @@ def tfidf_encoding(s):
     tfidf_WN_matrix = tfidf_vectorizer_WN.fit_transform(s)
     with open('TFIDFVectorizer.pk', 'wb') as fin:
         pickle.dump(tfidf_vectorizer_WN, fin)
+    return tfidf_WN_matrix
+
+
+def tfidf_encoding_val(s):
+    '''
+    Takes a series of Texts and transforms the strings to a TFIDF matrix
+    :param s: pandas series
+    :return: Numpy Matrix
+    '''
+
+    with open('TFIDFVectorizer.pk', 'rb') as f:
+        tfidf_vectorizer_WN = pickle.load(f)
+    tfidf_WN_matrix = tfidf_vectorizer_WN.transform(s)
+
     return tfidf_WN_matrix
