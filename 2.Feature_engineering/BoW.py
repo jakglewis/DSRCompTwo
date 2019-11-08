@@ -1,10 +1,11 @@
 import string
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize
+from gensim.models import Word2Vec
 import pickle
 
 
@@ -90,3 +91,38 @@ def tfidf_encoding_val(s):
     tfidf_WN_matrix = tfidf_vectorizer_WN.transform(s)
 
     return tfidf_WN_matrix
+
+def w2v_create(X_train):
+    sentences = []
+    col = X_train.loc[:,X_train.dtypes == object]
+    for i in range(col.shape[1]):
+        sentences.extend(col.iloc[:,i].tolist())
+    w2v_model = Word2Vec(sentences, min_count=4)
+    with open('w2v_model.pk', 'wb') as fin:
+        pickle.dump(w2v_model, fin)
+    pass
+
+def transform_vocab(wordlist):
+    '''
+    Use dataframe.apply(transform_vocab) to transform the list of words in each Dataframe column to a list of numpy array vectors
+    :param wordlist: list of words
+    :return: list of numpy arrays with word vector (length: 100) and padded sequence (length:20)
+    '''
+    with open('w2v_model.pk', 'rb') as f:
+        model = pickle.load(f)
+    filtered_wl = [word for word in wordlist if word in model.wv.vocab]
+    vectorlist = model.wv[filtered_wl]
+    paddings = 20 - len(vectorlist)
+    padded_vectorlist = paddings * [100 * [0]] + vectorlist[0:20].tolist()
+    return np.asarray(padded_vectorlist)
+
+def w2v_transform(X_train):
+    '''
+    Transforms the cleaned Dataframe from containing a list of words to containing a padded sequence of word vectors.
+    :param X_train:
+    :return: padded vectorized Dataframe
+    '''
+    idx = [X_train.columns.get_loc(c) for c in X_train.filter(like='Top').columns if c in X_train]
+    for i in idx:
+        X_train.iloc[:, i] = X_train.iloc[:, i].apply(transform_vocab)
+    return X_train
