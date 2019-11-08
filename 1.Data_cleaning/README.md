@@ -14,8 +14,8 @@ This dataset was taken from the Kaggle competition [Daily News for Stock Market 
 
 The dataset is from two sources:
 
-the r/worldnews Reddit - the top 25 headlines ranked by upvotes
-Yahoo Finance
+* the worldnews Reddit - the top 25 headlines ranked by upvotes
+* Yahoo Finance
 
 
 ### Run Model
