@@ -8,7 +8,7 @@ __pycache__/
 *.csv
 
 # don't add files in data
-0.Raw_data/
+#0.Raw_data/
 
 
 # Distribution / packaging

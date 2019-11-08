@@ -82,7 +82,7 @@ for date in stop_punc_data.index:
         # Remove stopwords
         if no_punc not in stop_words:
             # Appending all text
-            clean_text.append(no_punc)
+            clean_text.append(no_punc.lower())
             # Assigning the data back to a dataframe
             stop_punc_data.loc[date,"total"] = " ".join(clean_text)
 
